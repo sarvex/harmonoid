@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:filepicker_windows/filepicker_windows.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -130,6 +131,10 @@ class IndexingState extends State<IndexingSetting> {
                                         32.0,
                                     child: LinearProgressIndicator(
                                       value: value,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.2),
                                       valueColor: AlwaysStoppedAnimation(
                                           Theme.of(context)
                                               .colorScheme
@@ -165,13 +170,18 @@ class IndexingState extends State<IndexingSetting> {
         MaterialButton(
           onPressed: () async {
             Directory? directory;
-            // TODO (alexmercerind): Handle Android specific calls. Will require requestLegacyExternalStorage.
             if (Platform.isWindows) {
               DirectoryPicker picker = new DirectoryPicker();
               directory = picker.getDirectory();
             }
             if (Platform.isLinux) {
               var path = await getDirectoryPath();
+              if (path != null) {
+                directory = Directory(path);
+              }
+            }
+            if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+              var path = await FilePicker.platform.getDirectoryPath();
               if (path != null) {
                 directory = Directory(path);
               }

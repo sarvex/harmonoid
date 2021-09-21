@@ -20,8 +20,8 @@ class Settings extends StatelessWidget {
         Container(
           height: 56.0,
           color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.08),
+              ? Colors.white.withOpacity(0.10)
+              : Colors.black.withOpacity(0.10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,12 +54,7 @@ class Settings extends StatelessWidget {
               IndexingSetting(),
               ThemeSetting(),
               AccentSetting(),
-              // TODO: Server is no longer necessary.
-              // ServerSetting(),
               LanguageSetting(),
-              // TODO: Fix scrolling bug in CollectionTabs widget & implement saving configuration.
-              // CollectionTabs(),
-              // TODO: Removed miscellaneous settings until we decide which ones are important.
               MiscellaneousSetting(),
               VersionSetting(),
               SizedBox(
@@ -119,23 +114,12 @@ class SettingsTile extends StatelessWidget {
               children: [
                 Text(
                   this.title!,
-                  style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.0,
-                  ),
+                  style: Theme.of(context).textTheme.headline2,
                 ),
                 Divider(color: Colors.transparent, height: 4.0),
                 Text(
                   this.subtitle!,
-                  style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white.withOpacity(0.8)
-                        : Colors.black.withOpacity(0.8),
-                    fontSize: 14.0,
-                  ),
+                  style: Theme.of(context).textTheme.headline3,
                 ),
                 Divider(color: Colors.transparent, height: 8.0),
                 Divider(

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:harmonoid/utils/widgets.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:harmonoid/core/collection.dart';
 import 'package:harmonoid/constants/language.dart';
@@ -48,7 +47,7 @@ abstract class Utils {
         ),
       ),
     );
-    currentlyPlaying.isBuffering = false;
+    nowPlaying.isBuffering = false;
   }
 
   static Future<void> handleInvalidLink() async {
@@ -75,18 +74,6 @@ abstract class Utils {
         ),
       ),
     );
-  }
-
-  static Future<void> askStoragePermission() async {
-    if (Platform.isAndroid) if (await Permission.storage.isDenied) {
-      PermissionStatus storagePermissionState =
-          await Permission.storage.request();
-      if (!storagePermissionState.isGranted) {
-        SystemNavigator.pop(
-          animated: true,
-        );
-      }
-    }
   }
 
   static ThemeData getTheme(
@@ -161,8 +148,13 @@ abstract class Utils {
         ),
       ),
       splashFactory: InkRipple.splashFactory,
-      splashColor: Colors.transparent,
+      splashColor: Platform.isAndroid ? null : Colors.transparent,
       primaryColorLight: accentColor,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.all(0.0),
+        ),
+      ),
       primaryColor: accentColor,
       primaryColorDark: accentColor,
       scaffoldBackgroundColor: configuration.acrylicEnabled!
@@ -170,8 +162,8 @@ abstract class Utils {
           : (isLight ? Colors.white : Color(0xFF121212)),
       toggleableActiveColor: accentColor,
       cardColor: isLight
-          ? Colors.black.withOpacity(0.04)
-          : Colors.white.withOpacity(0.04),
+          ? Colors.black.withOpacity(0.06)
+          : Colors.white.withOpacity(0.06),
       backgroundColor: accentColor.withOpacity(0.24),
       dividerColor: isLight ? Colors.black12 : Colors.white24,
       disabledColor: isLight ? Colors.black38 : Colors.white38,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:harmonoid/constants/language.dart';
 
@@ -8,9 +9,10 @@ import 'package:harmonoid/core/youtubemusic.dart';
 import 'package:harmonoid/core/configuration.dart';
 import 'package:harmonoid/utils/utils.dart';
 
-CurrentlyPlaying currentlyPlaying = CurrentlyPlaying();
+var nowPlaying = NowPlayingController();
+var nowPlayingBar = NowPlayingBarController();
 
-class CurrentlyPlaying extends ChangeNotifier {
+class NowPlayingController extends ChangeNotifier {
   int? get index => _index;
   List<Track> get tracks => _tracks;
   bool get isPlaying => _isPlaying;
@@ -21,6 +23,8 @@ class CurrentlyPlaying extends ChangeNotifier {
   Duration get position => _position;
   Duration get duration => _duration;
   String get state => _state;
+  bool get isShuffling => _isShuffling;
+  bool get isRepeating => _isRepeating;
 
   double volumeBeforeMute = 1.0;
 
@@ -75,6 +79,16 @@ class CurrentlyPlaying extends ChangeNotifier {
     this.notifyListeners();
   }
 
+  set isShuffling(bool isShuffling) {
+    this._isShuffling = isShuffling;
+    this.notifyListeners();
+  }
+
+  set isRepeating(bool isRepeating) {
+    this._isRepeating = isRepeating;
+    this.notifyListeners();
+  }
+
   int? _index;
   List<Track> _tracks = <Track>[];
   bool _isPlaying = false;
@@ -85,9 +99,39 @@ class CurrentlyPlaying extends ChangeNotifier {
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
   String _state = language!.STRING_BUFFERING;
+  bool _isShuffling = false;
+  bool _isRepeating = false;
 }
 
-class CollectionRefresh extends ChangeNotifier {
+class NowPlayingBarController extends ChangeNotifier {
+  double _height = 0.0;
+  bool _maximized = false;
+
+  double get height {
+    return this._height;
+  }
+
+  set height(double value) {
+    if (maximized) return;
+    this._height = value;
+    this.notifyListeners();
+  }
+
+  bool get maximized {
+    return this._maximized;
+  }
+
+  set maximized(bool value) {
+    if (value)
+      this._height = 0.0;
+    else
+      this._height = 72.0;
+    this._maximized = value;
+    this.notifyListeners();
+  }
+}
+
+class CollectionRefreshController extends ChangeNotifier {
   int progress = 0;
   int total = 0;
 
@@ -111,11 +155,16 @@ class CollectionRefresh extends ChangeNotifier {
 class Visuals extends ChangeNotifier {
   Accent? accent;
   ThemeMode? themeMode;
+  BuildContext? context;
 
-  Visuals({required this.accent, required this.themeMode});
+  Visuals(
+      {required this.accent, required this.themeMode, required this.context});
 
   void update(
-      {Accent? accent, ThemeMode? themeMode, TargetPlatform? platform}) {
+      {Accent? accent,
+      ThemeMode? themeMode,
+      TargetPlatform? platform,
+      BuildContext? context}) {
     this.accent = accent ?? this.accent;
     this.themeMode = themeMode ?? this.themeMode;
     if (Platform.isWindows) {
@@ -128,10 +177,37 @@ class Visuals extends ChangeNotifier {
             : Color(0xCC222222),
       );
     }
+    if ((Platform.isAndroid || Platform.isIOS) && context != null) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white54
+              : Colors.black38,
+          statusBarBrightness: Theme.of(context).brightness,
+          statusBarIconBrightness: Theme.of(context).brightness,
+        ),
+      );
+    }
     this.notifyListeners();
     configuration.save(
       accent: this.accent,
       themeMode: this.themeMode,
+    );
+  }
+
+  void updateAppBar(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.black38
+            : Colors.white54,
+        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+      ),
     );
   }
 
@@ -146,7 +222,7 @@ class Visuals extends ChangeNotifier {
       );
 }
 
-class YouTubeState extends ChangeNotifier {
+class YouTubeStateController extends ChangeNotifier {
   List<Track> recommendations = <Track>[];
   String? recommendation;
   bool exception = false;
@@ -171,17 +247,10 @@ class YouTubeState extends ChangeNotifier {
   }
 }
 
-class Accent {
-  final Color light;
-  final Color dark;
-
-  Accent({required this.light, required this.dark});
-}
-
-class NotificationLyrics extends ChangeNotifier {
+class NotificationLyricsController extends ChangeNotifier {
   late bool enabled;
 
-  NotificationLyrics({required this.enabled});
+  NotificationLyricsController({required this.enabled});
 
   void update({required bool enabled}) {
     this.enabled = enabled;
@@ -190,22 +259,18 @@ class NotificationLyrics extends ChangeNotifier {
   }
 }
 
-class Server extends ChangeNotifier {
-  String? homeAddress;
+class Accent {
+  final Color light;
+  final Color dark;
 
-  Server({required this.homeAddress});
-
-  void update({required String? homeAddress}) {
-    this.homeAddress = homeAddress;
-    this.notifyListeners();
-    configuration.save(homeAddress: homeAddress);
-  }
+  Accent({required this.light, required this.dark});
 }
 
 List<Accent?> accents = [
   Accent(
-      light: Colors.deepPurpleAccent.shade200,
-      dark: Colors.deepPurpleAccent.shade200),
+    light: Colors.deepPurpleAccent.shade400,
+    dark: Colors.deepPurpleAccent.shade200,
+  ),
   Accent(light: Color(0xFFFF0000), dark: Color(0xFFFF0000)),
   Accent(light: Color(0xFF4285F4), dark: Color(0xFF82B1FF)),
   Accent(light: Color(0xFFF4B400), dark: Color(0xFFFFE57F)),

@@ -46,13 +46,12 @@ class CustomListView extends StatelessWidget {
       this.scrollDirection,
       this.shrinkWrap,
       this.padding}) {
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       scroller.addListener(
         () {
-          ScrollDirection scrollDirection =
-              scroller.position.userScrollDirection;
+          var scrollDirection = scroller.position.userScrollDirection;
           if (scrollDirection != ScrollDirection.idle) {
-            double scrollEnd = scroller.offset +
+            var scrollEnd = scroller.offset +
                 (scrollDirection == ScrollDirection.reverse
                     ? velocity
                     : -velocity);
@@ -63,11 +62,27 @@ class CustomListView extends StatelessWidget {
         },
       );
     }
+    if (Platform.isAndroid || Platform.isIOS) {
+      scroller.addListener(
+        () {
+          var scrollDirection = scroller.position.userScrollDirection;
+          if (!nowPlayingBar.maximized) {
+            if (scrollDirection != ScrollDirection.forward) {
+              nowPlayingBar.height = 0.0;
+            }
+            if (scrollDirection != ScrollDirection.reverse) {
+              if (nowPlaying.tracks.isNotEmpty) nowPlayingBar.height = 72.0;
+            }
+          }
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: this.padding ?? EdgeInsets.zero,
       controller: this.scroller,
       scrollDirection: this.scrollDirection ?? Axis.vertical,
@@ -193,8 +208,8 @@ class NavigatorPopButton extends StatelessWidget {
           width: 40.0,
           decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.04)
-                : Colors.black.withOpacity(0.04),
+                ? Colors.white.withOpacity(0.08)
+                : Colors.black.withOpacity(0.08),
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Icon(
@@ -252,7 +267,7 @@ class _RefreshCollectionButtonState extends State<RefreshCollectionButton> {
               this.tween = Tween<double>(begin: 0, end: this.turns);
               await Provider.of<Collection>(context, listen: false).refresh(
                   onProgress: (progress, total, isCompleted) {
-                Provider.of<CollectionRefresh>(context, listen: false)
+                Provider.of<CollectionRefreshController>(context, listen: false)
                     .set(progress, total);
                 this.setState(() => this.lock = !isCompleted);
               });
@@ -645,28 +660,25 @@ class ContextMenuButtonState<T> extends State<ContextMenuButton<T>> {
         ),
       );
 
-    return Padding(
-      padding: EdgeInsets.all(4.0),
-      child: InkWell(
-        onTap: widget.enabled ? showButtonMenu : null,
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
+    return InkWell(
+      onTap: widget.enabled ? showButtonMenu : null,
+      borderRadius: BorderRadius.all(
+        Radius.circular(8.0),
+      ),
+      child: Container(
+        height: 40.0,
+        width: 40.0,
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(8.0),
         ),
-        child: Container(
-          height: 40.0,
-          width: 40.0,
-          decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: widget.icon ??
-              Icon(
-                FluentIcons.more_vertical_20_regular,
-                size: 20.0,
-              ),
-        ),
+        child: widget.icon ??
+            Icon(
+              FluentIcons.more_vertical_20_regular,
+              size: 20.0,
+            ),
       ),
     );
   }
@@ -677,14 +689,21 @@ class WindowTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isAndroid || Platform.isIOS)
+      return Container(
+        height: MediaQuery.of(context).padding.top,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white.withOpacity(0.12)
+            : Colors.black.withOpacity(0.12),
+      );
     return Platform.isWindows
         ? Container(
             width: (MediaQuery.of(context).size.width *
                 (Platform.isLinux ? 0.75 : 1.0)),
             height: 32.0,
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.08),
+                ? Colors.white.withOpacity(0.12)
+                : Colors.black.withOpacity(0.12),
             child: MoveWindow(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -967,5 +986,13 @@ class CollectionTrackContextMenu extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class CustomScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

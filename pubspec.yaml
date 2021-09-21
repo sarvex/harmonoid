@@ -1,5 +1,5 @@
 name: harmonoid
-description: A beautiful app to play all your music.
+description: Elegant music app to play local music & YouTube music. Distributes music into albums & artists. Has playlists & lyrics.
 publish_to: "none"
 version: 0.1.6+5003
 
@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   animations: ^2.0.0
   provider: ^5.0.0
-  libwinmedia: ^0.0.4
+  libwinmedia: 0.0.4
   flutter_media_metadata:
     git:
       url: https://github.com/alexmercerind/flutter_media_metadata.git
@@ -51,18 +51,6 @@ flutter:
   assets:
     - assets/images/about-header.jpg
     - assets/images/collection-album.jpg
-    - assets/images/credits-albums.jpg
-    - assets/images/credits-tracks.jpg
-    - assets/images/credits-artists.jpg
-    - assets/images/credits-exception.jpg
-    - assets/images/discover-albums.jpg
-    - assets/images/discover-tracks.jpg
-    - assets/images/discover-artists.jpg
-    - assets/images/exception.jpg
-    - assets/images/credits-album-art-0.jpg
-    - assets/images/credits-album-art-1.jpg
-    - assets/images/credits-album-art-2.jpg
-    - assets/images/credits-album-art-3.jpg
 
   fonts:
     - family: "Roboto"
