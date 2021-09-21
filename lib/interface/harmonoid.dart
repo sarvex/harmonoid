@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:harmonoid/utils/widgets.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,6 @@ class Harmonoid extends StatelessWidget {
       create: (context) => Visuals(
         accent: configuration.accent,
         themeMode: configuration.themeMode,
-        context: context,
       ),
       builder: (context, _) => Consumer<Visuals>(
         builder: (context, visuals, _) => MaterialApp(
@@ -29,14 +27,6 @@ class Harmonoid extends StatelessWidget {
           darkTheme: visuals.darkTheme,
           themeMode: visuals.themeMode,
           navigatorKey: key,
-          builder: (context, child) {
-            if (Platform.isAndroid)
-              return ScrollConfiguration(
-                behavior: CustomScrollBehavior(),
-                child: child!,
-              );
-            return child!;
-          },
           home: FractionallyScaledWidget(
             child: Home(),
           ),

@@ -1,17 +1,15 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:animations/animations.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-
-import 'package:harmonoid/core/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:harmonoid/core/discordrpc.dart';
 import 'package:harmonoid/interface/changenotifiers.dart';
-import 'package:harmonoid/interface/nowplaying.dart';
 import 'package:harmonoid/interface/nowplayingbar.dart';
 import 'package:harmonoid/utils/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:harmonoid/core/lyrics.dart';
+
+import 'package:harmonoid/core/collection.dart';
 import 'package:harmonoid/interface/collection/collectionmusic.dart';
 import 'package:harmonoid/constants/language.dart';
 
@@ -39,21 +37,19 @@ class HomeState extends State<Home>
 
   @override
   Future<bool> didPopRoute() async {
-    if (nowPlayingBar.maximized) nowPlayingBar.maximized = false;
     if (this.navigatorKey.currentState!.canPop()) {
       this.navigatorKey.currentState!.pop();
     } else {
       showDialog(
         context: context,
         builder: (subContext) => AlertDialog(
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           title: Text(
             language!.STRING_EXIT_TITLE,
             style: Theme.of(subContext).textTheme.headline1,
           ),
           content: Text(
             language!.STRING_EXIT_SUBTITLE,
-            style: Theme.of(subContext).textTheme.headline3,
+            style: Theme.of(subContext).textTheme.headline5,
           ),
           actions: [
             MaterialButton(
@@ -73,25 +69,9 @@ class HomeState extends State<Home>
     return true;
   }
 
-  void showNowPlaying() {
-    nowPlayingBar.maximized = true;
-    navigatorKey.currentState?.push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            FadeThroughTransition(
-          fillColor: Colors.transparent,
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          child: NowPlayingScreen(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: MultiProvider(
         providers: [
           ChangeNotifierProvider<Collection>(
@@ -103,14 +83,11 @@ class HomeState extends State<Home>
           ChangeNotifierProvider<Lyrics>(
             create: (context) => Lyrics.get(),
           ),
-          ChangeNotifierProvider<NowPlayingController>(
-            create: (context) => nowPlaying,
+          ChangeNotifierProvider<CurrentlyPlaying>(
+            create: (context) => currentlyPlaying,
           ),
-          ChangeNotifierProvider<NowPlayingBarController>(
-            create: (context) => nowPlayingBar,
-          ),
-          ChangeNotifierProvider<YouTubeStateController>(
-            create: (context) => YouTubeStateController(),
+          ChangeNotifierProvider<YouTubeState>(
+            create: (context) => YouTubeState(),
           ),
           Provider<DiscordRPC>(
             create: (context) => discordRPC,
@@ -123,7 +100,6 @@ class HomeState extends State<Home>
             Expanded(
               child: Consumer<Language>(
                 builder: (context, _, __) => Scaffold(
-                  resizeToAvoidBottomInset: false,
                   body: HeroControllerScope(
                     controller: MaterialApp.createMaterialHeroController(),
                     child: Navigator(
@@ -136,8 +112,7 @@ class HomeState extends State<Home>
                             builder: (BuildContext context) =>
                                 ChangeNotifierProvider(
                               child: const CollectionMusic(),
-                              create: (context) =>
-                                  CollectionRefreshController(),
+                              create: (context) => CollectionRefresh(),
                               builder: (context, child) => child!,
                             ),
                           );
@@ -146,12 +121,51 @@ class HomeState extends State<Home>
                       },
                     ),
                   ),
+                  // bottomNavigationBar: BottomNavigationBar(
+                  //   type: BottomNavigationBarType.shifting,
+                  //   currentIndex: this.index!,
+                  //   onTap: (int index) => this.setState(() => this.index = index),
+                  //   items: <BottomNavigationBarItem>[
+                  //         BottomNavigationBarItem(
+                  //           icon: Icon(Icons.play_arrow),
+                  //           label: language!.STRING_NOW_PLAYING,
+                  //           backgroundColor: Theme.of(context)
+                  //               .bottomNavigationBarTheme
+                  //               .backgroundColor,
+                  //         ),
+                  //         BottomNavigationBarItem(
+                  //           icon: Icon(Icons.library_music),
+                  //           label: language!.STRING_COLLECTION,
+                  //           backgroundColor: Theme.of(context)
+                  //               .bottomNavigationBarTheme
+                  //               .backgroundColor,
+                  //         ),
+                  //       ] +
+                  //       (configuration.homeAddress != ''
+                  //           ? <BottomNavigationBarItem>[
+                  //               BottomNavigationBarItem(
+                  //                 icon: Icon(Icons.search),
+                  //                 label: language!.STRING_DISCOVER,
+                  //                 backgroundColor: Theme.of(context)
+                  //                     .bottomNavigationBarTheme
+                  //                     .backgroundColor,
+                  //               ),
+                  //             ]
+                  //           : <BottomNavigationBarItem>[]) +
+                  //       <BottomNavigationBarItem>[
+                  //         BottomNavigationBarItem(
+                  //           icon: Icon(Icons.settings),
+                  //           label: language!.STRING_SETTING,
+                  //           backgroundColor: Theme.of(context)
+                  //               .bottomNavigationBarTheme
+                  //               .backgroundColor,
+                  //         ),
+                  //       ],
+                  // ),
                 ),
               ),
             ),
-            NowPlayingBar(
-              launch: this.showNowPlaying,
-            ),
+            const NowPlayingBar(),
           ],
         ),
       ),

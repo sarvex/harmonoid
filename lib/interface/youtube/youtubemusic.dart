@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/rendering.dart';
+import 'package:harmonoid/core/configuration.dart';
 
 import 'package:harmonoid/core/playback.dart';
 import 'package:harmonoid/core/collection.dart';
@@ -13,7 +13,7 @@ import 'package:harmonoid/interface/youtube/youtubetile.dart';
 import 'package:harmonoid/constants/language.dart';
 import 'package:harmonoid/utils/utils.dart';
 import 'package:harmonoid/utils/widgets.dart';
-import 'package:harmonoid/core/configuration.dart';
+import 'package:provider/provider.dart';
 
 class YouTubeMusic extends StatefulWidget {
   const YouTubeMusic({Key? key}) : super(key: key);
@@ -24,7 +24,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
   @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
-    YouTubeStateController youtube = Provider.of<YouTubeStateController>(
+    YouTubeState youtube = Provider.of<YouTubeState>(
       context,
       listen: false,
     );
@@ -40,7 +40,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
   }
 
   Future<void> play(Track track) async {
-    nowPlaying.isBuffering = true;
+    currentlyPlaying.isBuffering = true;
     await track.attachAudioStream();
     if (track.filePath != null) {
       await Playback.play(
@@ -49,7 +49,12 @@ class YouTubeMusicState extends State<YouTubeMusic> {
           track,
         ],
       );
-      nowPlaying.isBuffering = false;
+      currentlyPlaying.isBuffering = false;
+      await configuration.save(
+        discoverRecent: [
+          track.trackId!,
+        ],
+      );
     }
   }
 
@@ -75,28 +80,15 @@ class YouTubeMusicState extends State<YouTubeMusic> {
     });
     List<Track> tracks = await YTM.search(query);
     this.result = tracks.isNotEmpty
-        ? CustomListView(
+        ? ListView(
             children: tracks
                 .map(
                   (track) => Material(
                     color: Colors.transparent,
                     child: ListTile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    FadeThroughTransition(
-                              fillColor: Colors.transparent,
-                              animation: animation,
-                              secondaryAnimation: secondaryAnimation,
-                              child: YouTube(
-                                track: track,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: () => this.play(
+                        track,
+                      ),
                       leading: CircleAvatar(
                         backgroundImage: NetworkImage(track.networkAlbumArt!),
                       ),
@@ -110,6 +102,31 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                             ' • ${track.albumName}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: ContextMenuButton(
+                        onSelected: (index) async {
+                          switch (index) {
+                            case 0:
+                              {
+                                await track.attachAudioStream();
+                                await Playback.add(
+                                  [
+                                    track,
+                                  ],
+                                );
+                                break;
+                              }
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 0,
+                            child: Text(
+                              language!.STRING_ADD_TO_NOW_PLAYING,
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -137,7 +154,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                 (elementsPerRow - 1) * 8) /
             elementsPerRow;
     double tileHeight = tileWidth * 246.0 / 156;
-    return Consumer<YouTubeStateController>(
+    return Consumer<YouTubeState>(
       builder: (context, youtube, _) => Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -172,8 +189,8 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                               decoration: BoxDecoration(
                                 color: Theme.of(context).brightness ==
                                         Brightness.dark
-                                    ? Colors.white.withOpacity(0.08)
-                                    : Colors.black.withOpacity(0.08),
+                                    ? Colors.white.withOpacity(0.04)
+                                    : Colors.black.withOpacity(0.04),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: Icon(
@@ -236,9 +253,6 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                                       56.0 -
                                       16.0,
                                   child: ListView.builder(
-                                    keyboardDismissBehavior:
-                                        ScrollViewKeyboardDismissBehavior
-                                            .onDrag,
                                     padding: EdgeInsets.zero,
                                     itemCount: values.length,
                                     itemBuilder:
@@ -277,9 +291,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                     ),
                     fieldViewBuilder: (context, controller, node, callback) =>
                         TextField(
-                      autofocus: Platform.isWindows ||
-                          Platform.isLinux ||
-                          Platform.isMacOS,
+                      autofocus: true,
                       controller: controller,
                       focusNode: node,
                       onChanged: (value) async {
@@ -344,6 +356,9 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                                 height: tileHeight,
                                 width: tileWidth,
                                 track: youtube.recommendations[index],
+                                action: () => this.play(
+                                  youtube.recommendations[index],
+                                ),
                               ),
                             ),
                           )

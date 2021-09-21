@@ -276,11 +276,11 @@ class CollectionAlbum extends StatelessWidget {
     return Consumer<Collection>(
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withOpacity(0.04)
+              : Colors.black.withOpacity(0.04),
         ),
-        height: MediaQuery.of(context).size.width > HORIZONTAL_BREAKPOINT
-            ? MediaQuery.of(context).size.height
-            : MediaQuery.of(context).size.width + 128.0,
+        height: MediaQuery.of(context).size.height,
         width: (MediaQuery.of(context).size.width *
                 (Platform.isLinux ? 0.75 : 1.0)) /
             3,
@@ -306,7 +306,7 @@ class CollectionAlbum extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -47,7 +47,6 @@ class CollectionSearchState extends State<CollectionSearch> {
     double tileHeightArtist = tileWidthArtist + 36.0;
     return Consumer<Collection>(
       builder: (context, collection, _) => Scaffold(
-        resizeToAvoidBottomInset: false,
         body: Column(
           children: [
             Container(
@@ -66,9 +65,7 @@ class CollectionSearchState extends State<CollectionSearch> {
                   ),
                   Expanded(
                     child: TextField(
-                      autofocus: Platform.isWindows ||
-                          Platform.isLinux ||
-                          Platform.isMacOS,
+                      autofocus: true,
                       controller: controller,
                       onChanged: (String query) async {
                         int localIndex = globalIndex;
