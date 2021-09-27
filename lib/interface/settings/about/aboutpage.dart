@@ -86,7 +86,7 @@ class AboutPageState extends State<AboutPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'assets/images/about-header.jpg',
+                        'assets/images/about_header.jpg',
                         fit: BoxFit.fitWidth,
                         alignment: Alignment.center,
                         height: 192,

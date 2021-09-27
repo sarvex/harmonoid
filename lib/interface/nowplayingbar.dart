@@ -180,9 +180,15 @@ class NowPlayingBarState extends State<NowPlayingBar> {
     return Consumer<NowPlayingController>(
       builder: (context, nowPlaying, _) => Container(
         height: 84.0,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white.withOpacity(0.10)
-            : Colors.black.withOpacity(0.10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withOpacity(0.10)
+              : Colors.black.withOpacity(0.10),
+          border: Border(
+            top: BorderSide(
+                color: Theme.of(context).dividerColor.withOpacity(0.12)),
+          ),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -367,19 +373,23 @@ class NowPlayingBarState extends State<NowPlayingBar> {
                         ),
                         Container(
                           width: 480.0,
-                          child: Slider(
-                            value:
-                                nowPlaying.position.inMilliseconds.toDouble(),
-                            onChanged: (value) {
-                              Playback.seek(
-                                Duration(
-                                  milliseconds: value.toInt(),
-                                ),
-                              );
-                            },
-                            max: nowPlaying.duration.inMilliseconds.toDouble(),
-                            min: 0.0,
-                          ),
+                          child: nowPlaying.position.inMilliseconds <=
+                                  nowPlaying.duration.inMilliseconds
+                              ? Slider(
+                                  value: nowPlaying.position.inMilliseconds
+                                      .toDouble(),
+                                  onChanged: (value) {
+                                    Playback.seek(
+                                      Duration(
+                                        milliseconds: value.toInt(),
+                                      ),
+                                    );
+                                  },
+                                  max: nowPlaying.duration.inMilliseconds
+                                      .toDouble(),
+                                  min: 0.0,
+                                )
+                              : Container(),
                         ),
                         SizedBox(
                           width: 12.0,

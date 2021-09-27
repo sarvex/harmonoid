@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:harmonoid/utils/widgets.dart';
@@ -34,8 +35,10 @@ class NowPlayingState extends State<NowPlayingScreen>
                           nowPlaying.tracks[nowPlaying.index!].networkAlbumArt!)
                       : FileImage(nowPlaying.tracks[nowPlaying.index!]
                           .albumArt))) as ImageProvider<Object>,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
+              height: (MediaQuery.of(context).size.height *
+                  (Platform.isLinux ? 0.8 : 1.0)),
+              width: (MediaQuery.of(context).size.width *
+                  (Platform.isLinux ? 0.8 : 1.0)),
               fit: BoxFit.cover,
             ),
             BackdropFilter(
@@ -70,8 +73,12 @@ class NowPlayingState extends State<NowPlayingScreen>
                                     : FileImage(nowPlaying
                                         .tracks[nowPlaying.index!]
                                         .albumArt))) as ImageProvider<Object>,
-                            height: MediaQuery.of(context).size.width - 64.0,
-                            width: MediaQuery.of(context).size.width - 64.0,
+                            height: (MediaQuery.of(context).size.width *
+                                    (Platform.isLinux ? 0.8 : 1.0)) -
+                                64.0,
+                            width: (MediaQuery.of(context).size.width *
+                                    (Platform.isLinux ? 0.8 : 1.0)) -
+                                64.0,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -84,7 +91,9 @@ class NowPlayingState extends State<NowPlayingScreen>
                     Container(
                       margin: EdgeInsets.symmetric(
                           vertical: 12.0, horizontal: 32.0),
-                      width: MediaQuery.of(context).size.width - 64.0,
+                      width: (MediaQuery.of(context).size.width *
+                              (Platform.isLinux ? 0.8 : 1.0)) -
+                          64.0,
                       child: nowPlaying.index != null
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,

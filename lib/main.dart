@@ -74,7 +74,7 @@ Future<void> main(List<String> args) async {
       cacheDirectory: configuration.cacheDirectory!,
       collectionSortType: configuration.collectionSortType!,
     );
-    collection.refresh(onProgress: (progress, total, _) {
+    await collection.refresh(onProgress: (progress, total, _) {
       collectionRefresh.set(progress, total);
     });
     await Language.initialize(

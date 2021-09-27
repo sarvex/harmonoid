@@ -1,25 +1,36 @@
-import 'dart:io';
+/* 
+ *  This file is part of Harmonoid (https://github.com/harmonoid/harmonoid).
+ *  
+ *  Harmonoid is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  
+ *  Harmonoid is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with Harmonoid. If not, see <https://www.gnu.org/licenses/>.
+ * 
+ *  Copyright 2020-2021, Hitesh Kumar Saini <saini123hitesh@gmail.com>.
+ */
 
+import 'dart:io';
+import 'package:libwinmedia/libwinmedia.dart' as LIBWINMEDIA;
 import 'package:assets_audio_player/assets_audio_player.dart'
     as AssetsAudioPlayer;
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:harmonoid/core/discordrpc.dart';
-import 'package:harmonoid/interface/changenotifiers.dart';
-import 'package:libwinmedia/libwinmedia.dart' as LIBWINMEDIA;
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:harmonoid/core/collection.dart';
+import 'package:harmonoid/core/discordrpc.dart';
+import 'package:harmonoid/interface/changenotifiers.dart';
 import 'package:harmonoid/core/configuration.dart';
 import 'package:harmonoid/core/lyrics.dart';
 import 'package:harmonoid/constants/language.dart';
-
-/// Never listen to event Streams of any audio playback backend but use [nowPlaying] notifier.
-/// This wil improve `Platform.isX` calls all around & keep code stream subscription cleaner.
-/// It will also make things look more cross-platform on the surface & in the UI code.
-///
-/// For handling different platform specific calls, add methods inside the [Playback]
-/// class below & then map within the UI code.
-///
 
 final LIBWINMEDIA.Player player = LIBWINMEDIA.Player(id: 0)
   ..streams.index.listen((index) {

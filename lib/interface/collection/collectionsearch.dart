@@ -3,7 +3,6 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:harmonoid/interface/collection/collectionartist.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/rendering.dart';
 
 import 'package:harmonoid/core/collection.dart';
 import 'package:harmonoid/interface/collection/collectionalbum.dart';
@@ -35,14 +34,14 @@ class CollectionSearchState extends State<CollectionSearch> {
     /// But their dimensions do not get recalculated because they are now part of mutable list.
     /// Thus, overflow happens if someone resizes the window. Unlike other tabs.
     int elementsPerRow =
-        (MediaQuery.of(context).size.width * (Platform.isLinux ? 0.75 : 1.0)) ~/
+        (MediaQuery.of(context).size.width * (Platform.isLinux ? 0.8 : 1.0)) ~/
             (156 + 8);
     double tileWidthAlbum =
-        ((MediaQuery.of(context).size.width * (Platform.isLinux ? 0.75 : 1.0)) -
+        ((MediaQuery.of(context).size.width * (Platform.isLinux ? 0.8 : 1.0)) -
                 16 -
                 (elementsPerRow - 1) * 8) /
             elementsPerRow;
-    double tileHeightAlbum = tileWidthAlbum * 260.0 / 156;
+    double tileHeightAlbum = tileWidthAlbum * 246.0 / 156;
     double tileWidthArtist = tileWidthAlbum;
     double tileHeightArtist = tileWidthArtist + 36.0;
     return Consumer<Collection>(
@@ -191,7 +190,7 @@ class CollectionSearchState extends State<CollectionSearch> {
                                     margin: EdgeInsets.only(left: 8.0),
                                     height: tileHeightAlbum + 16.0,
                                     width: (MediaQuery.of(context).size.width *
-                                        (Platform.isLinux ? 0.75 : 1.0)),
+                                        (Platform.isLinux ? 0.8 : 1.0)),
                                     child: CustomListView(
                                       scrollDirection: Axis.horizontal,
                                       children: _albums,
@@ -206,7 +205,7 @@ class CollectionSearchState extends State<CollectionSearch> {
                                     margin: EdgeInsets.only(left: 8.0),
                                     height: tileHeightArtist + 16.0,
                                     width: (MediaQuery.of(context).size.width *
-                                        (Platform.isLinux ? 0.75 : 1.0)),
+                                        (Platform.isLinux ? 0.8 : 1.0)),
                                     child: CustomListView(
                                       scrollDirection: Axis.horizontal,
                                       children: _artists,

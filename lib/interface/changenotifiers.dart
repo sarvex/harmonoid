@@ -141,23 +141,25 @@ class CollectionRefreshController extends ChangeNotifier {
     this.progress = progress;
     this.total = total;
     if (this.timer == null) {
-      collection.redraw();
       this.notifyListeners();
+      collection.redraw();
       this.timer = Timer.periodic(
         Duration(seconds: 1),
         (_) {
-          collection.redraw();
           this.notifyListeners();
+          collection.redraw();
         },
       );
     }
     if (this.progress == this.total) {
-      collection.redraw();
       this.notifyListeners();
+      collection.redraw();
       this.timer?.cancel();
       this.timer = null;
     }
   }
+
+  void redraw() => this.notifyListeners();
 }
 
 class Visuals extends ChangeNotifier {
@@ -285,7 +287,7 @@ List<Accent?> accents = [
     light: Colors.deepPurpleAccent.shade400,
     dark: Colors.deepPurpleAccent.shade200,
   ),
-  Accent(light: Color(0xFFFF0000), dark: Color(0xFFFF0000)),
+  Accent(light: Color(0xFFE53935), dark: Color(0xFFE53935)),
   Accent(light: Color(0xFF4285F4), dark: Color(0xFF82B1FF)),
   Accent(light: Color(0xFFF4B400), dark: Color(0xFFFFE57F)),
   Accent(light: Color(0xFF0F9D58), dark: Color(0xFF0F9D58)),

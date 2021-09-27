@@ -85,7 +85,7 @@ class CollectionTrackTile extends StatelessWidget {
             (this.track.trackDuration != null
                     ? (Duration(milliseconds: this.track.trackDuration!).label +
                         ' • ')
-                    : '0:00') +
+                    : '0:00 • ') +
                 this.track.albumName! +
                 ' • ' +
                 (this.track.trackArtistNames!.length < 2
@@ -112,6 +112,8 @@ class LeadingCollectionTrackTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border:
+            Border.all(color: Theme.of(context).dividerColor.withOpacity(0.12)),
         borderRadius: BorderRadius.circular(8.0),
       ),
       clipBehavior: Clip.antiAlias,
@@ -132,7 +134,7 @@ class LeadingCollectionTrackTile extends StatelessWidget {
                 alignment: Alignment.center,
                 height: 156.0,
                 width: (MediaQuery.of(context).size.width *
-                        (Platform.isLinux ? 0.75 : 1.0)) -
+                        (Platform.isLinux ? 0.8 : 1.0)) -
                     16.0,
               ),
               Padding(

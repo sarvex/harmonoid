@@ -129,10 +129,10 @@ class YouTubeMusicState extends State<YouTubeMusic> {
   @override
   Widget build(BuildContext context) {
     int elementsPerRow =
-        (MediaQuery.of(context).size.width * (Platform.isLinux ? 0.75 : 1.0)) ~/
+        (MediaQuery.of(context).size.width * (Platform.isLinux ? 0.8 : 1.0)) ~/
             (156 + 8);
     double tileWidth =
-        ((MediaQuery.of(context).size.width * (Platform.isLinux ? 0.75 : 1.0)) -
+        ((MediaQuery.of(context).size.width * (Platform.isLinux ? 0.8 : 1.0)) -
                 16 -
                 (elementsPerRow - 1) * 8) /
             elementsPerRow;
@@ -195,7 +195,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                             Container(
                       margin: EdgeInsets.only(right: 16.0),
                       width: (MediaQuery.of(context).size.width *
-                              (Platform.isLinux ? 0.75 : 1.0)) -
+                              (Platform.isLinux ? 0.8 : 1.0)) -
                           16.0 -
                           56.0,
                       child: Align(
@@ -209,16 +209,16 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                               child: Container(
                                 color: Colors.transparent,
                                 width: MediaQuery.of(context).size.width *
-                                    (Platform.isLinux ? 0.75 : 1.0),
+                                    (Platform.isLinux ? 0.8 : 1.0),
                                 height: MediaQuery.of(context).size.height *
-                                    (Platform.isLinux ? 0.75 : 1.0),
+                                    (Platform.isLinux ? 0.8 : 1.0),
                               ),
                             ),
                             Container(
                               margin: EdgeInsets.only(top: 4.0),
                               height: 236.0,
                               width: (MediaQuery.of(context).size.width *
-                                      (Platform.isLinux ? 0.75 : 1.0)) -
+                                      (Platform.isLinux ? 0.8 : 1.0)) -
                                   2 * 16.0 -
                                   56.0 -
                                   16.0,
@@ -231,7 +231,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                                 child: Container(
                                   height: 236.0,
                                   width: (MediaQuery.of(context).size.width *
-                                          (Platform.isLinux ? 0.75 : 1.0)) -
+                                          (Platform.isLinux ? 0.8 : 1.0)) -
                                       2 * 16.0 -
                                       56.0 -
                                       16.0,
@@ -400,7 +400,7 @@ class YouTubeMusicState extends State<YouTubeMusic> {
                         transitionType: SharedAxisTransitionType.vertical,
                         child: Container(
                           width: (MediaQuery.of(context).size.width *
-                              (Platform.isLinux ? 0.75 : 1.0)),
+                              (Platform.isLinux ? 0.8 : 1.0)),
                           child: child,
                         ))),
           ),

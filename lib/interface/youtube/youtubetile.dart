@@ -27,13 +27,14 @@ class YouTubeTile extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Container(
-      height: this.height,
-      width: this.width,
+      height: this.height! - 2.0,
+      width: this.width! - 2.0,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
         color: Theme.of(context).cardColor,
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withOpacity(0.12),
+        ),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Material(
         color: Colors.transparent,
@@ -69,15 +70,15 @@ class YouTubeTile extends StatelessWidget {
                   child: Image.network(
                     this.track.networkAlbumArt!,
                     fit: BoxFit.cover,
-                    height: this.width,
-                    width: this.width,
+                    height: this.width! - 2.0,
+                    width: this.width! - 2.0,
                   ),
                 ),
               ),
               Container(
                 padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                height: this.height! - this.width!,
-                width: this.width,
+                height: this.height! - this.width! - 2.0,
+                width: this.width! - 2.0,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,7 +156,7 @@ class YouTubeState extends State<YouTube> {
             ? MediaQuery.of(context).size.height
             : MediaQuery.of(context).size.width + 128.0,
         width: (MediaQuery.of(context).size.width *
-                (Platform.isLinux ? 0.75 : 1.0)) /
+                (Platform.isLinux ? 0.8 : 1.0)) /
             3,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -351,7 +352,7 @@ class YouTubeState extends State<YouTube> {
           builder: (context, constraints) => Container(
             height: MediaQuery.of(context).size.height,
             width: (MediaQuery.of(context).size.width *
-                (Platform.isLinux ? 0.75 : 1.0)),
+                (Platform.isLinux ? 0.8 : 1.0)),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

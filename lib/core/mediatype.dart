@@ -1,13 +1,35 @@
+/* 
+ *  This file is part of Harmonoid (https://github.com/harmonoid/harmonoid).
+ *  
+ *  Harmonoid is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  
+ *  Harmonoid is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with Harmonoid. If not, see <https://www.gnu.org/licenses/>.
+ * 
+ *  Copyright 2020-2021, Hitesh Kumar Saini <saini123hitesh@gmail.com>.
+ */
+
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
 import 'package:harmonoid/core/configuration.dart';
 
-abstract class MediaType {
+abstract class Media with Comparable {
+  @override
+  int compareTo(dynamic track) => -1;
+
   Map<String, dynamic> toMap();
 }
 
-class Track extends MediaType with Comparable {
+class Track extends Media {
   String? trackName;
   String? albumName;
   int? trackNumber;
@@ -20,16 +42,16 @@ class Track extends MediaType with Comparable {
   int? bitrate;
   String? trackId;
   String? albumId;
+  int? timeAdded;
   dynamic extras;
   File get albumArt {
-    File albumArtFile = File(path.join(
-        configuration.cacheDirectory!.path,
-        'albumArts',
-        '${this.albumArtistName}_${this.albumName}'
-                .replaceAll(RegExp(r'[^\s\w]'), ' ') +
-            '.PNG'));
-    if (albumArtFile.existsSync())
-      return albumArtFile;
+    var albumArt = File(path.join(
+      configuration.cacheDirectory!.path,
+      'AlbumArts',
+      this.albumArtBasename,
+    ));
+    if (albumArt.existsSync())
+      return albumArt;
     else if (File(path.join(path.dirname(this.filePath!), 'cover.jpg'))
         .existsSync())
       return File(path.join(path.dirname(this.filePath!), 'cover.jpg'));
@@ -37,8 +59,8 @@ class Track extends MediaType with Comparable {
         .existsSync())
       return File(path.join(path.dirname(this.filePath!), 'Folder.jpg'));
     else
-      return File(path.join(configuration.cacheDirectory!.path, 'albumArts',
-          'defaultAlbumArt' + '.PNG'));
+      return File(path.join(
+          configuration.cacheDirectory!.path, 'AlbumArts', 'UnknownAlbum.PNG'));
   }
 
   @override
@@ -66,17 +88,22 @@ class Track extends MediaType with Comparable {
       'networkAlbumArt': this.networkAlbumArt,
       'trackId': this.trackId,
       'albumId': this.albumId,
+      'timeAdded': this.timeAdded,
     };
   }
 
-  static Track fromMap(Map<String, dynamic> map) => Track(
-        trackName: map['trackName'],
+  factory Track.fromMap(Map<String, dynamic> map) => Track(
+        trackName: [null, ''].contains(map['trackName'])
+            ? path.basename(map['filePath'])
+            : map['trackName'],
         albumName: ![null, ''].contains(map['albumName'])
             ? map['albumName']
             : 'Unknown Album',
         trackNumber: map['trackNumber'],
         year: map['year'],
-        albumArtistName: map['albumArtistName'] ?? 'Unknown Artist',
+        albumArtistName: [null, ''].contains(map['albumArtistName'])
+            ? 'Unknown Artist'
+            : map['albumArtistName'],
         trackArtistNames:
             (map['trackArtistNames'] ?? <String>['Unknown Artist'])
                 .cast<String>(),
@@ -86,16 +113,26 @@ class Track extends MediaType with Comparable {
         bitrate: map['bitrate'],
         trackId: map['trackId'],
         albumId: map['albumId'],
+        timeAdded: map.containsKey('filePath') &&
+                !(map['filePath']?.startsWith('http') ?? true) &&
+                File(map['filePath']).existsSync()
+            ? File(map['filePath']).lastModifiedSync().millisecondsSinceEpoch
+            : 0,
       );
 
   @override
   int compareTo(dynamic track) {
-    int result = -1;
     if (track is Track) {
-      result = this.trackName!.compareTo(track.trackName!);
+      return this.trackName!.compareTo(track.trackName!).abs() +
+          this.albumArtistName!.compareTo(track.albumArtistName!).abs();
     }
-    return result;
+    return -1;
   }
+
+  String get albumArtBasename =>
+      '${this.albumName}${this.albumArtistName}'
+          .replaceAll(RegExp(r'[\\/:*?""<>| ]'), '') +
+      '.PNG';
 
   Track({
     this.trackName,
@@ -110,10 +147,11 @@ class Track extends MediaType with Comparable {
     this.bitrate,
     this.trackId,
     this.albumId,
+    this.timeAdded,
   });
 }
 
-class Album extends MediaType with Comparable {
+class Album extends Media {
   String? albumName;
   int? year;
   String? albumArtistName;
@@ -121,14 +159,13 @@ class Album extends MediaType with Comparable {
   String? networkAlbumArt;
   String? albumId;
   File get albumArt {
-    File albumArtFile = File(path.join(
-        configuration.cacheDirectory!.path,
-        'albumArts',
-        '${this.albumArtistName}_${this.albumName}'
-                .replaceAll(RegExp(r'[^\s\w]'), ' ') +
-            '.PNG'));
-    if (albumArtFile.existsSync())
-      return albumArtFile;
+    var albumArt = File(path.join(
+      configuration.cacheDirectory!.path,
+      'AlbumArts',
+      this.albumArtBasename,
+    ));
+    if (albumArt.existsSync())
+      return albumArt;
     else if (File(
             path.join(path.dirname(this.tracks.first.filePath!), 'cover.jpg'))
         .existsSync())
@@ -140,8 +177,8 @@ class Album extends MediaType with Comparable {
       return File(
           path.join(path.dirname(this.tracks.first.filePath!), 'Folder.jpg'));
     else
-      return File(path.join(configuration.cacheDirectory!.path, 'albumArts',
-          'defaultAlbumArt' + '.PNG'));
+      return File(path.join(
+          configuration.cacheDirectory!.path, 'AlbumArts', 'UnknownAlbum.PNG'));
   }
 
   @override
@@ -159,13 +196,25 @@ class Album extends MediaType with Comparable {
         'albumId': this.albumId,
       };
 
-  static Album fromMap(Map<String, dynamic> map) => Album(
+  int get timeAdded =>
+      this.tracks.reduce((value, element) {
+        if ((element.timeAdded ?? 0) > (value.timeAdded ?? 0)) return value;
+        return element;
+      }).timeAdded ??
+      0;
+
+  factory Album.fromMap(Map<String, dynamic> map) => Album(
         albumName: map['albumName'] ?? 'Unknown Album',
         year: map['year'],
         albumArtistName: map['albumArtistName'] ?? 'Unknown Artist',
         networkAlbumArt: map['networkAlbumArt'],
         albumId: map['albumId'],
       );
+
+  String get albumArtBasename =>
+      '${this.albumName}${this.albumArtistName}'
+          .replaceAll(RegExp(r'[\\/:*?""<>| ]'), '') +
+      '.PNG';
 
   Album({
     this.albumName,
@@ -177,15 +226,15 @@ class Album extends MediaType with Comparable {
 
   @override
   int compareTo(dynamic album) {
-    int result = -1;
     if (album is Album) {
-      result = this.albumName!.compareTo(album.albumName!);
+      return this.albumName!.compareTo(album.albumName!).abs() +
+          this.albumArtistName!.compareTo(album.albumArtistName!).abs();
     }
-    return result;
+    return -1;
   }
 }
 
-class Artist extends MediaType with Comparable {
+class Artist extends Media {
   String? artistName;
   List<Album> albums = <Album>[];
   List<Track> tracks = <Track>[];
@@ -207,17 +256,23 @@ class Artist extends MediaType with Comparable {
             .toList(),
       };
 
-  static Artist fromMap(Map<String, dynamic> artistMap) => Artist(
+  int get timeAdded =>
+      this.tracks.reduce((value, element) {
+        if ((element.timeAdded ?? 0) > (value.timeAdded ?? 0)) return value;
+        return element;
+      }).timeAdded ??
+      0;
+
+  factory Artist.fromMap(Map<String, dynamic> artistMap) => Artist(
         artistName: artistMap['artistName'],
       );
 
   @override
   int compareTo(dynamic artist) {
-    int result = -1;
     if (artist is Artist) {
-      result = this.artistName!.compareTo(artist.artistName!);
+      return this.artistName!.compareTo(artist.artistName!);
     }
-    return result;
+    return -1;
   }
 
   Artist({
@@ -225,7 +280,7 @@ class Artist extends MediaType with Comparable {
   });
 }
 
-class Playlist extends MediaType {
+class Playlist extends Media {
   String? playlistName;
   int? playlistId;
   List<Track> tracks = <Track>[];

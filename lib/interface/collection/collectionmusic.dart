@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:animations/animations.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -578,35 +577,25 @@ class CollectionMusicState extends State<CollectionMusic>
               builder: (context, refresh, __) => Stack(
                 alignment: Alignment.bottomLeft,
                 children: <Widget>[
-                      (refresh.progress != refresh.total &&
-                              collection.collectionRefreshType ==
-                                  CollectionRefreshType.soft)
-                          ? Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation(
-                                    Theme.of(context).colorScheme.secondary),
-                              ),
-                            )
-                          : PageTransitionSwitcher(
-                              child: [
-                                CollectionAlbumTab(),
-                                CollectionTrackTab(),
-                                CollectionArtistTab(),
-                                CollectionPlaylistTab(),
-                                CollectionSearch(),
-                                YouTubeMusic(),
-                              ][this.index],
-                              transitionBuilder:
-                                  (child, animation, secondaryAnimation) =>
-                                      SharedAxisTransition(
-                                fillColor: Colors.transparent,
-                                animation: animation,
-                                secondaryAnimation: secondaryAnimation,
-                                transitionType:
-                                    SharedAxisTransitionType.vertical,
-                                child: child,
-                              ),
-                            ),
+                      PageTransitionSwitcher(
+                        child: [
+                          CollectionAlbumTab(),
+                          CollectionTrackTab(),
+                          CollectionArtistTab(),
+                          CollectionPlaylistTab(),
+                          CollectionSearch(),
+                          YouTubeMusic(),
+                        ][this.index],
+                        transitionBuilder:
+                            (child, animation, secondaryAnimation) =>
+                                SharedAxisTransition(
+                          fillColor: Colors.transparent,
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                          transitionType: SharedAxisTransitionType.vertical,
+                          child: child,
+                        ),
+                      ),
                     ] +
                     (refresh.progress == refresh.total
                         ? <Widget>[]

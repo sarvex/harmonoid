@@ -4,25 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:harmonoid/utils/widgets.dart';
 
 import 'package:harmonoid/core/collection.dart';
-import 'package:harmonoid/constants/language.dart';
 import 'package:harmonoid/core/configuration.dart';
 import 'package:harmonoid/interface/changenotifiers.dart';
 import 'package:harmonoid/interface/harmonoid.dart';
 
 abstract class Utils {
-  static String? mediaTypeToLanguage(MediaType mediaType) {
-    if (mediaType is Album)
-      return language!.STRING_ALBUM;
-    else if (mediaType is Track)
-      return language!.STRING_TRACK;
-    else if (mediaType is Artist)
-      return language!.STRING_ARTIST;
-    else if (mediaType is Playlist)
-      return language!.STRING_PLAYLIST;
-    else
-      return null;
-  }
-
   static Future<void> handleYouTubeFailure() async {
     showDialog(
       context: key.currentState!.overlay!.context,
@@ -132,8 +118,33 @@ abstract class Utils {
         fontSize: 14.0,
         fontWeight: FontWeights.thin(isLight),
       ),
+      button: TextStyle(
+        color: accentColor,
+        fontSize: 14.0,
+        fontWeight: FontWeights.thick(isLight),
+      ),
     );
     return ThemeData(
+      chipTheme: ChipThemeData(
+        backgroundColor: accentColor,
+        disabledColor: accentColor.withOpacity(0.2),
+        selectedColor: accentColor,
+        secondarySelectedColor: accentColor,
+        padding: EdgeInsets.zero,
+        labelStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14.0,
+          fontFamily: Platform.isLinux ? 'Roboto' : null,
+          fontWeight: FontWeights.thin(isLight),
+        ),
+        secondaryLabelStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14.0,
+          fontFamily: Platform.isLinux ? 'Roboto' : null,
+          fontWeight: FontWeights.thin(isLight),
+        ),
+        brightness: Brightness.dark,
+      ),
       fontFamily: Platform.isLinux ? 'Roboto' : null,
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: accentColor,

@@ -1,3 +1,22 @@
+/* 
+ *  This file is part of Harmonoid (https://github.com/harmonoid/harmonoid).
+ *  
+ *  Harmonoid is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  
+ *  Harmonoid is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with Harmonoid. If not, see <https://www.gnu.org/licenses/>.
+ * 
+ *  Copyright 2020-2021, Hitesh Kumar Saini <saini123hitesh@gmail.com>.
+ */
+
 import 'package:hotkey_manager/hotkey_manager.dart';
 
 import 'package:harmonoid/core/playback.dart';
@@ -10,7 +29,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.space,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) => Playback.playOrPause(),
@@ -18,7 +37,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyN,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) => Playback.next(),
@@ -26,7 +45,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyB,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) => Playback.back(),
@@ -34,7 +53,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyM,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) => Playback.toggleMute(),
@@ -42,7 +61,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyC,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) {
@@ -54,7 +73,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyV,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) {
@@ -66,7 +85,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyZ,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) {
@@ -78,7 +97,7 @@ class HotKeys {
         HotKeyManager.instance.register(
           HotKey(
             KeyCode.keyX,
-            modifiers: [KeyModifier.control],
+            modifiers: [KeyModifier.alt],
             scope: HotKeyScope.inapp,
           ),
           keyDownHandler: (_) {

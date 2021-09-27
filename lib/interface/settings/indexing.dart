@@ -55,7 +55,13 @@ class IndexingState extends State<IndexingSetting> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(directory.path),
+                            Expanded(
+                              child: Text(
+                                directory.path,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                             MaterialButton(
                               onPressed: () async {
                                 if (configuration

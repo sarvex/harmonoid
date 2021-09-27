@@ -13,6 +13,8 @@ import 'package:harmonoid/core/playback.dart';
 import 'package:harmonoid/interface/changenotifiers.dart';
 import 'package:share_plus/share_plus.dart';
 
+const double HORIZONTAL_BREAKPOINT = 720.0;
+
 class FractionallyScaledWidget extends StatelessWidget {
   final Widget child;
   const FractionallyScaledWidget({Key? key, required this.child})
@@ -22,10 +24,10 @@ class FractionallyScaledWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (Platform.isLinux)
       return FractionallySizedBox(
-        heightFactor: 0.75,
-        widthFactor: 0.75,
+        heightFactor: 0.8,
+        widthFactor: 0.8,
         child: Transform.scale(
-          scale: 1 / 0.75,
+          scale: 1 / 0.8,
           child: this.child,
         ),
       );
@@ -46,7 +48,7 @@ class CustomListView extends StatelessWidget {
       this.scrollDirection,
       this.shrinkWrap,
       this.padding}) {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    if (Platform.isWindows) {
       scroller.addListener(
         () {
           var scrollDirection = scroller.position.userScrollDirection;
@@ -62,7 +64,8 @@ class CustomListView extends StatelessWidget {
         },
       );
     }
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (HORIZONTAL_BREAKPOINT <
+        MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width) {
       scroller.addListener(
         () {
           var scrollDirection = scroller.position.userScrollDirection;
@@ -707,7 +710,7 @@ class WindowTitleBar extends StatelessWidget {
     return Platform.isWindows
         ? Container(
             width: (MediaQuery.of(context).size.width *
-                (Platform.isLinux ? 0.75 : 1.0)),
+                (Platform.isLinux ? 0.8 : 1.0)),
             height: 32.0,
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white.withOpacity(0.10)
